@@ -17,6 +17,13 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+/* Queste sono le rotte di Auth */
 Auth::routes();
 
-Route::get('/home', 'Admin\HomeController@index')->name('home');
+/* Questa è la rotta */
+/* Route::get('/home', 'Admin\HomeController@index')->name('home'); */
+
+Route::middleware('auth')->namespace('Admin')->name('admin')->prefix('admin')->group(function () {
+    Route::get('/', 'Admin\HomeController@index')->name('home');
+});
+
