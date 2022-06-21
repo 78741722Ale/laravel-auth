@@ -23,7 +23,11 @@ Auth::routes();
 /* Questa è la rotta */
 /* Route::get('/home', 'Admin\HomeController@index')->name('home'); */
 
-Route::middleware('auth')->namespace('Admin')->name('admin')->prefix('admin')->group(function () {
-    Route::get('/', 'Admin\HomeController@index')->name('dashboard');
+Route::middleware('auth')->namespace('Admin')->name('admin.')->prefix('admin')->group(function () {
+    Route::get('/', 'HomeController@index')->name('dashboard');
 });
 
+/* Rotta per il front office */
+Route::get('{any?}', function() {
+    return view('guests.home');
+})->where('any', '.*');
