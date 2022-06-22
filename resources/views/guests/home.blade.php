@@ -17,7 +17,8 @@
 </head>
 
     <body>
-        @yield('app')
+        <!-- Div principale della radice -->
+        <div id="root"></div>
     </body>
 
 </html>
