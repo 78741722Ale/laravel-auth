@@ -24,7 +24,10 @@ Auth::routes();
 /* Route::get('/home', 'Admin\HomeController@index')->name('home'); */
 
 Route::middleware('auth')->namespace('Admin')->name('admin.')->prefix('admin')->group(function () {
+    /* Admin Dashboard */
     Route::get('/', 'HomeController@index')->name('dashboard');
+    /* Admin post */
+    Route::resource('posts', 'PostController');
 });
 
 /* Rotta per il front office */

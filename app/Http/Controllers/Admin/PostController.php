@@ -15,7 +15,9 @@ class PostController extends Controller
      */
     public function index()
     {
-        //
+        /* Ora richiamo i dati del faker */
+        $posts = Post::all();
+        return view('admin.posts.index', compact('posts'));
     }
 
     /**
