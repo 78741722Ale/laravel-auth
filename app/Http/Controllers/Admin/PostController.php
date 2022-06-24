@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Models\Post;
-use Illuminate\Http\Request;
+use App\Models\Category;
 use App\Http\Controllers\Controller;
-
+use App\Http\Requests\PostRequest;
+use Illuminate\Http\Request; // 👈 Import the Request class
+use Illuminate\Validation\Rule; // 👈 Import the Validation Rule class
 class PostController extends Controller
 {
     /**
@@ -15,8 +17,8 @@ class PostController extends Controller
      */
     public function index()
     {
-        /* Ora richiamo i dati del faker */
-        $posts = Post::all();
+        $posts = Post::orderByDesc('id')->get();
+        //dd($posts);
         return view('admin.posts.index', compact('posts'));
     }
 
@@ -27,18 +29,34 @@ class PostController extends Controller
      */
     public function create()
     {
-        //
+        $categories = Category::all();
+        //dd($categories);
+        return view('admin.posts.create', compact('categories'));
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Http\Requests\PostRequest $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(PostRequest $request)
     {
-        //
+        //dd($request->all());
+
+        // Validate data
+        $val_data = $request->validated();
+
+        // se l'id esiste tra gli id della tabelal categories
+
+
+        // Genera la slug
+        $slug = Post::generateSlug($request->title);
+        $val_data['slug'] = $slug;
+        // Crea la risorsa
+        Post::create($val_data);
+        /* Ora il return del pattern */
+        return redirect()->route('admin.posts.index');
     }
 
     /**
@@ -49,7 +67,8 @@ class PostController extends Controller
      */
     public function show(Post $post)
     {
-        //
+        // Qua mi basta solo ritornare la view
+        return view('admin.posts.show', compact('post'));
     }
 
     /**
@@ -60,19 +79,39 @@ class PostController extends Controller
      */
     public function edit(Post $post)
     {
-        //
+        /* Qua Dichiaro i dati da editare tramite modello */
+        $categories = Category::all();
+        /* Qua ritorno la view del form per editare */
+        return view('admin.posts.edit', compact('post', 'categories'));
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Http\Requests\PostRequest  $request
      * @param  \App\Models\Post  $post
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, Post $post)
     {
-        //
+        /* Validazione dei dati */
+        $val_data = $request->validate(
+            [
+                'title' => 'required|max:50',
+                'category_id' => 'nullable|exists:categories,id',
+                'cover_image' => 'nullable',
+                'content' => 'nullable'
+            ]
+        );
+
+        // Genera lo slug
+        $slug = Post::generateSlug($request->title);
+        $val_data['slug'] = $slug;
+         /* Avvio l'update */
+        $post->update($val_data);
+
+        /* Ora eseguo il return della rotta */
+        return redirect()->route('admin.posts.index');
     }
 
     /**
@@ -83,6 +122,9 @@ class PostController extends Controller
      */
     public function destroy(Post $post)
     {
-        //
+        // Qui si Cancella un record
+        $post->delete();
+        /* Ora eseguo il return della rotta */
+        return redirect()->route('admin.posts.index');
     }
 }

@@ -13,24 +13,34 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
 
-/* Queste sono le rotte di Auth */
 Auth::routes();
 
-/* Questa è la rotta */
-/* Route::get('/home', 'Admin\HomeController@index')->name('home'); */
 
-Route::middleware('auth')->namespace('Admin')->name('admin.')->prefix('admin')->group(function () {
-    /* Admin Dashboard */
+Route::middleware('auth')->prefix('admin')->namespace('Admin')->name('admin.')->group(function () {
+    // Admin Dashboard
     Route::get('/', 'HomeController@index')->name('dashboard');
-    /* Admin post */
-    Route::resource('posts', 'PostController');
+    // Admin posts
+    Route::resource('posts', 'PostController')->parameters([
+        'posts' => 'post:slug'
+    ]);
+    Route::resource('categories', 'CategoryController')->parameters([
+        'categories' => 'category:slug'
+    ])->except(['show', 'create', 'edit']);
 });
 
-/* Rotta per il front office */
-Route::get('{any?}', function() {
-    return view('guests.home');
-})->where('any', '.*');
+// inseriamola come ultima rotta
+// alla fine del file web.php
+Route::get("{any?}", function () {
+    return view("guest.home");
+})->where("any", ".*");
+
+
+
+/*
+- close registration
+- Model: Category + Table: categories + Controller: Admin/CategoryController + One to Many
+- Model: Tag + Table: tags + Controller: Admin/TagController + Many To Many
+
+
+*/
