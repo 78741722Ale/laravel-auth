@@ -13,13 +13,9 @@
                         {{ session('status') }}
                     </div>
                     @endif
-
-
                     <div>
                         <a href="{{route('admin.posts.create')}}" class="btn btn-primary">Create Post</a>
                     </div>
-
-
                 </div>
             </div>
         </div>

@@ -42,14 +42,7 @@ class PostController extends Controller
      */
     public function store(PostRequest $request)
     {
-        //dd($request->all());
-
-        // Validate data
         $val_data = $request->validated();
-
-        // se l'id esiste tra gli id della tabelal categories
-
-
         // Genera la slug
         $slug = Post::generateSlug($request->title);
         $val_data['slug'] = $slug;
